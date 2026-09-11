@@ -37,9 +37,9 @@ const answerQuestion = async (
     question
   );
 
-  // ==========================================
+  
   // 1. CHECK CACHE
-  // ==========================================
+  
 
   const cachedAnswer = await getCache(cacheKey);
 
@@ -65,9 +65,9 @@ const answerQuestion = async (
   console.log("CACHE MISS");
 
 
-  // ==========================================
+  
   // 2. GET / CREATE CONVERSATION
-  // ==========================================
+  
 
   let conversation =
     await Conversation.findOne({
@@ -86,9 +86,9 @@ const answerQuestion = async (
   }
 
 
-  // ==========================================
+  
   // 3. GET CONVERSATION HISTORY
-  // ==========================================
+  
 
   const previousMessages =
     await Message.find({
@@ -102,9 +102,9 @@ const answerQuestion = async (
   previousMessages.reverse();
 
 
-  // ==========================================
+  
   // 4. HYBRID RETRIEVAL
-  // ==========================================
+  
 
   const chunks = await hybridSearch(
     question,
@@ -118,9 +118,9 @@ const answerQuestion = async (
   );
 
 
-  // ==========================================
+  
   // 5. NO RELEVANT CHUNKS
-  // ==========================================
+  
 
   if (chunks.length === 0) {
 
@@ -147,9 +147,9 @@ const answerQuestion = async (
   }
 
 
-  // ==========================================
+  
   // 6. RERANK HYBRID RESULTS
-  // ==========================================
+  
 
   const rerankedChunks =
     await rerankChunks(
@@ -173,9 +173,9 @@ const answerQuestion = async (
   );
 
 
-  // ==========================================
+  
   // 7. BUILD DOCUMENT CONTEXT
-  // ==========================================
+  
 
   const context =
     topChunks
@@ -186,9 +186,9 @@ const answerQuestion = async (
       .join("\n\n");
 
 
-  // ==========================================
+  
   // 8. BUILD CONVERSATION HISTORY
-  // ==========================================
+  
 
   const conversationHistory =
     previousMessages
@@ -202,9 +202,9 @@ const answerQuestion = async (
       .join("\n");
 
 
-  // ==========================================
+  
   // 9. BUILD RAG + MEMORY PROMPT
-  // ==========================================
+  
 
   const prompt = `
 You are DocuMind, an AI document research assistant.
@@ -246,9 +246,9 @@ Answer:
 `;
 
 
-  // ==========================================
+  
   // 10. GENERATE ANSWER
-  // ==========================================
+  
 
   const llmStart = Date.now();
 
@@ -265,9 +265,9 @@ Answer:
   );
 
 
-  // ==========================================
+  
   // 11. SAVE USER MESSAGE
-  // ==========================================
+  
 
   await Message.create({
     conversationId: conversation._id,
@@ -276,9 +276,9 @@ Answer:
   });
 
 
-  // ==========================================
+  
   // 12. SAVE ASSISTANT MESSAGE
-  // ==========================================
+  
 
   await Message.create({
     conversationId: conversation._id,
@@ -287,9 +287,9 @@ Answer:
   });
 
 
-  // ==========================================
+  
   // 13. RETURN ANSWER + SOURCES
-  // ==========================================
+  
 
   const sources =
     topChunks.map(
@@ -311,9 +311,9 @@ Answer:
   };
 
 
-  // ==========================================
+  
   // 14. CACHE RESULT
-  // ==========================================
+  
 
   await setCache(
     cacheKey,
@@ -322,9 +322,9 @@ Answer:
   );
 
 
-  // ==========================================
+  
   // 15. TOTAL LATENCY
-  // ==========================================
+  
 
   const latency =
     Date.now() - startTime;
@@ -356,9 +356,9 @@ Answer:
 //   onComplete
 // ) => {
 
-//   // ==========================================
+//   
 //   // 1. GET / CREATE CONVERSATION
-//   // ==========================================
+//   
 
 //   let conversation =
 //     await Conversation.findOne({
@@ -377,9 +377,9 @@ Answer:
 //   }
 
 
-//   // ==========================================
+//   
 //   // 2. GET CONVERSATION HISTORY
-//   // ==========================================
+//   
 
 //   const previousMessages =
 //     await Message.find({
@@ -392,9 +392,9 @@ Answer:
 //   previousMessages.reverse();
 
 
-//   // ==========================================
+//   
 //   // 3. HYBRID SEARCH
-//   // ==========================================
+//   
 
 //   const chunks =
 //     await hybridSearch(
@@ -433,9 +433,9 @@ Answer:
 //   }
 
 
-//   // ==========================================
+//   
 //   // 4. RERANK
-//   // ==========================================
+//   
 
 //   const rerankedChunks =
 //     await rerankChunks(
@@ -447,9 +447,9 @@ Answer:
 //     rerankedChunks.slice(0, 5);
 
 
-//   // ==========================================
+//   
 //   // 5. BUILD CONTEXT
-//   // ==========================================
+//   
 
 //   const context =
 //     topChunks
@@ -460,9 +460,9 @@ Answer:
 //       .join("\n\n");
 
 
-//   // ==========================================
+//   
 //   // 6. CONVERSATION HISTORY
-//   // ==========================================
+//   
 
 //   const conversationHistory =
 //     previousMessages
@@ -476,9 +476,9 @@ Answer:
 //       .join("\n");
 
 
-//   // ==========================================
+//   
 //   // 7. BUILD PROMPT
-//   // ==========================================
+//   
 
 //   const prompt = `
 // You are DocuMind, an AI document research assistant.
@@ -513,9 +513,9 @@ Answer:
 // `;
 
 
-//   // ==========================================
+//   
 //   // 8. STREAM LLM RESPONSE
-//   // ==========================================
+//   
 
 //   let fullAnswer = "";
 
@@ -534,9 +534,9 @@ Answer:
 //   );
 
 
-//   // ==========================================
+//   
 //   // 9. SAVE MESSAGES
-//   // ==========================================
+//   
 
 //   await Message.create({
 //     conversationId: conversation._id,
@@ -551,9 +551,9 @@ Answer:
 //   });
 
 
-//   // ==========================================
+//   
 //   // 10. SOURCES
-//   // ==========================================
+//   
 
 //   const sources =
 //     topChunks.map(
@@ -566,9 +566,9 @@ Answer:
 //     );
 
 
-//   // ==========================================
+//   
 //   // 11. COMPLETE
-//   // ==========================================
+//   
 
 //   onComplete({
 //     answer: fullAnswer,
@@ -587,9 +587,9 @@ const streamAnswerQuestion = async (
 
   const startTime = Date.now();
 
-  // ==========================================
+  
   // 1. CHECK REDIS CACHE
-  // ==========================================
+  
 
   const cacheKey = generateRagCacheKey(
     userId,
@@ -630,9 +630,9 @@ const streamAnswerQuestion = async (
   console.log("STREAM CACHE MISS");
 
 
-  // ==========================================
+  
   // 2. GET / CREATE CONVERSATION
-  // ==========================================
+  
 
   let conversation =
     await Conversation.findOne({
@@ -651,9 +651,9 @@ const streamAnswerQuestion = async (
   }
 
 
-  // ==========================================
+  
   // 3. GET CONVERSATION HISTORY
-  // ==========================================
+  
 
   const previousMessages =
     await Message.find({
@@ -666,9 +666,9 @@ const streamAnswerQuestion = async (
   previousMessages.reverse();
 
 
-  // ==========================================
+  
   // 4. HYBRID SEARCH
-  // ==========================================
+  
 
   const chunks =
     await hybridSearch(
@@ -683,9 +683,9 @@ const streamAnswerQuestion = async (
   );
 
 
-  // ==========================================
+  
   // 5. NO RELEVANT CHUNKS
-  // ==========================================
+  
 
   if (chunks.length === 0) {
 
@@ -717,9 +717,9 @@ const streamAnswerQuestion = async (
   }
 
 
-  // ==========================================
+  
   // 6. RERANK
-  // ==========================================
+  
 
   const rerankedChunks =
     await rerankChunks(
@@ -733,9 +733,9 @@ const streamAnswerQuestion = async (
   );
 
 
-  // ==========================================
+  
   // 7. SELECT TOP 5
-  // ==========================================
+  
 
   const topChunks =
     rerankedChunks.slice(0, 5);
@@ -746,9 +746,9 @@ const streamAnswerQuestion = async (
   );
 
 
-  // ==========================================
+  
   // 8. BUILD DOCUMENT CONTEXT
-  // ==========================================
+  
 
   const context =
     topChunks
@@ -759,9 +759,9 @@ const streamAnswerQuestion = async (
       .join("\n\n");
 
 
-  // ==========================================
+  
   // 9. BUILD CONVERSATION HISTORY
-  // ==========================================
+  
 
   const conversationHistory =
     previousMessages
@@ -775,9 +775,9 @@ const streamAnswerQuestion = async (
       .join("\n");
 
 
-  // ==========================================
+  
   // 10. BUILD PROMPT
-  // ==========================================
+  
 
   const prompt = `
 You are DocuMind, an AI document research assistant.
@@ -819,9 +819,9 @@ Answer:
 `;
 
 
-  // ==========================================
+  
   // 11. STREAM LLM
-  // ==========================================
+  
 
   let fullAnswer = "";
 
@@ -840,9 +840,9 @@ Answer:
   );
 
 
-  // ==========================================
+  
   // 12. SAVE USER MESSAGE
-  // ==========================================
+  
 
   await Message.create({
     conversationId: conversation._id,
@@ -851,9 +851,9 @@ Answer:
   });
 
 
-  // ==========================================
+  
   // 13. SAVE ASSISTANT MESSAGE
-  // ==========================================
+  
 
   await Message.create({
     conversationId: conversation._id,
@@ -862,9 +862,9 @@ Answer:
   });
 
 
-  // ==========================================
+  
   // 14. BUILD SOURCES
-  // ==========================================
+  
 
   const sources =
     topChunks.map(
@@ -877,9 +877,9 @@ Answer:
     );
 
 
-  // ==========================================
+  
   // 15. BUILD RESULT
-  // ==========================================
+  
 
   const result = {
     answer: fullAnswer,
@@ -889,9 +889,9 @@ Answer:
   };
 
 
-  // ==========================================
+  
   // 16. SAVE TO REDIS
-  // ==========================================
+  
 
   await setCache(
     cacheKey,
@@ -900,9 +900,9 @@ Answer:
   );
 
 
-  // ==========================================
+  
   // 17. COMPLETE
-  // ==========================================
+  
 
   console.log(
     "Stream cache miss total latency:",

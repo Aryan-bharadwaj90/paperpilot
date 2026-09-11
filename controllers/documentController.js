@@ -338,9 +338,8 @@ if (!document) {
     message: "Document not found"
   });
 }
-    // ==========================================
+  
     // VALIDATE QUESTION
-    // ==========================================
 
     if (!question || !question.trim()) {
 
@@ -348,12 +347,9 @@ if (!document) {
         message: "Question is required"
       });
     }
-
-
-    // ==========================================
+    
     // SSE HEADERS
-    // ==========================================
-
+    
     res.setHeader(
       "Content-Type",
       "text/event-stream"
@@ -371,10 +367,7 @@ if (!document) {
 
     res.flushHeaders();
 
-
-    // ==========================================
     // SEND TOKEN
-    // ==========================================
 
     const sendToken = (token) => {
 
@@ -386,10 +379,7 @@ if (!document) {
       );
     };
 
-
-    // ==========================================
     // SEND COMPLETE
-    // ==========================================
 
     const sendComplete = (result) => {
 
@@ -403,10 +393,8 @@ if (!document) {
       res.end();
     };
 
-
-    // ==========================================
     // RUN STREAMING RAG
-    // ==========================================
+    
     
     await streamAnswerQuestion(
       question,
